@@ -1,7 +1,7 @@
 # AgentOps with MLflow
 ### Practical MLflow Workflows for Monitoring, Evaluation & Continuous Improvement
 
-**Speaker:** Stephanie Alba · [@SpyderAlba](https://github.com/SpyderAlba)  
+**Speaker:** Stephanie Alba · [@SpyderAlba](https://github.com/SpyderAlba)
 **Format:** 60-Minute Hands-On Workshop
 
 ---
@@ -21,14 +21,14 @@ By the end of this session you'll have a working observability stack for agent s
 
 ## Notebooks
 
-Two tracks — same six pillars, same concepts, different MLflow runtime:
+Two tracks — same six pillars, same concepts, different MLflow capabilities:
 
 | Track | Notebook | When to Use |
 |---|---|---|
-| **Track A — Databricks** | `Agent Ops at Scale (Databricks).ipynb` | On Databricks; uses MLflow 3 GenAI APIs (`mlflow.genai.evaluate()`, built-in scorers, UC-backed traces) |
-| **Track B — OSS** | `Agent Ops at Scale (OSS MLflow).ipynb` | Local / self-hosted MLflow; uses classic `mlflow.evaluate()` API |
+| **Track A — Databricks** | `AgentOps with MLflow.py` | On Databricks; uses MLflow 3 GenAI APIs (built-in scorers, UC-backed traces, multi-turn simulation, prompt optimization) |
+| **Track B — OSS** | `AgentOps with OSS MLflow.py` | OSS MLflow APIs only; uses code-based `@scorer` functions for evaluation |
 
-> **Note:** `mlflow.genai.evaluate()`, built-in scorers (including `Safety()`), `ConversationSimulator`, and `optimize_prompts()` are currently available only in Managed MLflow on Databricks. OSS support is coming soon. Tracing (Pillar 1) and metric logging (Pillars 3–4) work fully on self-hosted MLflow.
+> **Note:** Built-in LLM-judge scorers (`Correctness`, `Safety`, `Guidelines`, etc.), `ConversationSimulator`, and `optimize_prompts()` are currently available only in Managed MLflow on Databricks. OSS support is coming soon. The OSS notebook uses code-based `@scorer` functions for deterministic evaluation. Tracing (Pillar 1) and metric logging (Pillars 3–4) work fully on self-hosted MLflow.
 
 ---
 
@@ -36,11 +36,11 @@ Two tracks — same six pillars, same concepts, different MLflow runtime:
 
 | Feature | Databricks Track | OSS Track |
 |---|---|---|
-| Evaluation API | `mlflow.genai.evaluate()` | `mlflow.genai.evaluate()` |
-| Safety scorer | `Safety()` (built-in) | `Guidelines(name="safety", guidelines=[...])` |
-| Trace storage | UC-backed Delta tables | Standard MLflow tracking server |
-| Agent return type | `{"response": answer}` | Plain string |
-| Prompt loading | `mlflow.genai.load_prompt()` | `mlflow.genai.load_prompt()` |
+| Evaluation scorers | Built-in LLM judges (`Correctness()`, `Safety()`, `Guidelines()`, etc.) | Code-based `@scorer` functions (`safety_check`, `answer_relevance`, etc.) |
+| Multi-turn simulation | `ConversationSimulator` with `ConversationCompleteness()`, `UserFrustration()` | Markdown reference (Databricks only) |
+| Prompt optimization | `GepaPromptOptimizer` with `mlflow.genai.optimize_prompts()` | Manual prompt iteration with version comparison |
+| Trace storage | UC-backed Delta tables (`mfg_mc_se_sa.agent_ops`) | Standard MLflow tracking server |
+| LLM endpoint | Databricks Foundation Models (`databricks-claude-sonnet-4`) | Databricks Foundation Models (or OpenAI `gpt-4o-mini` for external use) |
 
 ---
 
@@ -48,26 +48,34 @@ Two tracks — same six pillars, same concepts, different MLflow runtime:
 
 **Databricks Track**
 - Databricks workspace with a running cluster
-- Unity Catalog enabled; catalog/schema: `mfg_mc_se_sa.agent_observability`
-- MLflow 3.x (included in Databricks Runtime 15.x+)
+- Unity Catalog enabled; catalog/schema: `mfg_mc_se_sa.agent_ops`
+- Access to Foundation Model APIs (`databricks-claude-sonnet-4`)
 
-**OSS Track**
+**OSS Track (on Databricks)**
+- Same as above — the OSS notebook runs on Databricks by default using only OSS-compatible APIs
+
+**OSS Track (self-hosted)**
 - Python 3.9+
-- `mlflow>=2.14`, `openai`, `pandas`
-- OpenAI API key (`OPENAI_API_KEY` env var)
+- `mlflow>=3.10`, `openai`
+- A self-hosted MLflow tracking server (`mlflow server --host 0.0.0.0 --port 5000`)
+- OpenAI API key (`OPENAI_API_KEY` env var) or another LLM provider
+- See the "Running Outside Databricks" section in the notebook for the 5 code changes needed
 
 ---
 
 ## Setup
 
-```bash
-# OSS track only
-pip install mlflow>=2.14 openai pandas
-export OPENAI_API_KEY="your-key-here"
-jupyter notebook "Agent Ops at Scale (OSS MLflow).ipynb"
+Both notebooks install their own dependencies in cell 2:
+
+```python
+# Databricks track
+%pip install "mlflow[databricks]>=3.13.0" openai "gepa>=0.0.26" litellm --quiet
+
+# OSS track
+%pip install mlflow>=3.10 openai --quiet
 ```
 
-For the Databricks track, import the notebook into your workspace and attach it to a running cluster.
+Import the notebooks into your Databricks workspace and attach to a running cluster.
 
 ---
 
@@ -75,20 +83,13 @@ For the Databricks track, import the notebook into your workspace and attach it 
 
 | Resource | Link |
 |---|---|
-| MLflow Tracing Docs | [mlflow.org/docs/latest/tracing](https://mlflow.org/docs/latest/tracing) |
-| MLflow GenAI Evaluation (Databricks) | [docs.databricks.com/aws/en/mlflow3/genai/eval-monitor/](https://docs.databricks.com/aws/en/mlflow3/genai/eval-monitor/) |
-| MLflow Evaluate (OSS) | [mlflow.org/docs/latest/llms/llm-evaluate](https://mlflow.org/docs/latest/llms/llm-evaluate) |
+| MLflow Releases | [mlflow.org/releases](https://mlflow.org/releases/3.13.0/) |
+| MLflow Tracing Docs | [mlflow.org/docs/latest/tracing](https://mlflow.org/docs/latest/tracing.html) |
+| MLflow GenAI Evaluation | [docs.databricks.com/aws/en/mlflow3/genai/eval-monitor/](https://docs.databricks.com/aws/en/mlflow3/genai/eval-monitor/) |
 | Prompt Optimization | [mlflow.org/docs/latest/genai/prompt-registry/optimize-prompts/](https://mlflow.org/docs/latest/genai/prompt-registry/optimize-prompts/) |
 | Migrate Traces to UC | [docs.databricks.com/aws/en/mlflow3/genai/tracing/migrate-traces-to-uc](https://docs.databricks.com/aws/en/mlflow3/genai/tracing/migrate-traces-to-uc) |
-
----
-
-## Files to Delete Before Using This Repo
-
-The following files from the original repo are no longer relevant and should be removed:
-
-- `kmeans_viz_template.Rmd` — old R clustering template from a previous project
-- `Documentation/ProjectPlan.md` — internal planning doc, not relevant to this workshop
+| Databricks MLflow 3 | [docs.databricks.com/aws/en/mlflow3/](https://docs.databricks.com/aws/en/mlflow3/) |
+| MLflow Auth Plugin | [mlflow.org/docs/latest/auth/](https://mlflow.org/docs/latest/auth/index.html) |
 
 ---
 
