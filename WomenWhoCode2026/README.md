@@ -2,7 +2,7 @@
 ### Practical MLflow Workflows for Monitoring, Evaluation & Continuous Improvement
 
 **Speaker:** Stephanie Alba · [@SpyderAlba](https://github.com/SpyderAlba)
-**Format:** 60-Minute Hands-On Workshop
+**Format:** 60-Minute Workshop
 
 ---
 
