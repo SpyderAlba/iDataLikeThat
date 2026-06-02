@@ -8,7 +8,7 @@
 
 ## What You'll Build
 
-By the end of this session you'll have a working observability stack for agent systems, covering all six pillars of Agent Ops:
+By the end of this session you'll have a working observability stack for agent systems, covering all six pillars of AgentOps:
 
 1. **Tracing & Observability** — MLflow Tracing captures every step: inputs, outputs, tool calls, latency, token usage
 2. **Evaluation** — Automated quality scoring using `mlflow.genai.evaluate()` with built-in and custom scorers
@@ -25,7 +25,7 @@ Two tracks — same six pillars, same concepts, different MLflow capabilities:
 
 | Track | Notebook | When to Use |
 |---|---|---|
-| **Track A — Databricks** | `AgentOps with MLflow.py` | On Databricks; uses MLflow 3 GenAI APIs (built-in scorers, UC-backed traces, multi-turn simulation, prompt optimization) |
+| **Track A — Databricks** | `AgentOps with Databricks Managed MLflow` | On Databricks; uses MLflow 3 GenAI APIs (built-in scorers, UC-backed traces, multi-turn simulation, prompt optimization) |
 | **Track B — OSS** | `AgentOps with OSS MLflow.py` | OSS MLflow APIs only; uses code-based `@scorer` functions for evaluation |
 
 > **Note:** Built-in LLM-judge scorers (`Correctness`, `Safety`, `Guidelines`, etc.), `ConversationSimulator`, and `optimize_prompts()` are currently available only in Managed MLflow on Databricks. OSS support is coming soon. The OSS notebook uses code-based `@scorer` functions for deterministic evaluation. Tracing (Pillar 1) and metric logging (Pillars 3–4) work fully on self-hosted MLflow.
