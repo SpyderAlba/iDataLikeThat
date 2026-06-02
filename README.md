@@ -7,7 +7,7 @@ If you find something useful, use it. If you expand on it, pull requests are wel
 
 ## Projects
 
-### [Agent Ops at Scale](./WomenWhoCode2026/)
+### [AgentOps with MLflow](./WomenWhoCode2026/)
 **Practical MLflow Workflows for Monitoring, Evaluation & Continuous Improvement**
 
 Hands-on workshop notebooks covering the six pillars of Agent Ops: tracing, evaluation, human feedback, production monitoring, governance, and prompt optimization — using MLflow on Databricks and open-source.
