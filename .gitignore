@@ -2,6 +2,7 @@
 mlruns/
 mlartifacts/
 outputs/
+WomenWhoCode2026/*MLflow Experiment
 
 # Python
 __pycache__/
